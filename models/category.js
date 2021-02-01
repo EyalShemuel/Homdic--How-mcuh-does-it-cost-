@@ -1,21 +1,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const moment = require('moment');
 
 const CategorySchema = new Schema({
+    img: Buffer,
+    imgName: String,
     Name: {
         type: String,
-        unique: true,
         required: true,
         trim: true
     },
-    Img:{
-        type:String,
-        required: true
-    },
-    createdAt: { 
+    createdAt: {
         type: String,
-        default: moment().format()
     }
 })
 

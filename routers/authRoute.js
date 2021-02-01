@@ -6,6 +6,7 @@ const jwt = require("jwt-simple");
 const saltRounds = 12;
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const checkUserToken = require("../routers/gFunctions/checkUserToken");
 const nodemailer = require("nodemailer");
 
 router.use(cookieParser());
@@ -72,7 +73,7 @@ router.post("/register", (req, res) => {
           fName: newUser.firstName,
           lName: newUser.lastName,
           time: new Date().getTime(),
-          id: newUser._id
+          id: newUser._id,
         },
         process.env.SECRET
       );
@@ -91,24 +92,38 @@ router.post("/register", (req, res) => {
 
 router.get("/userInfo", (req, res) => {
   const token = req.cookies.userLoggedIn;
-  if (token) {
-    const decoded = jwt.decode(token, process.env.SECRET);
-    res.send({ decoded });
-  } else {
-    res.send({ ok: false });
+  try {
+    if (token) {
+      const decoded = jwt.decode(token, process.env.SECRET);
+      res.send({ decoded });
+    } else {
+      res.send({ ok: false });
+    }
+  } catch (e) {
+    console.log(e);
   }
 });
 
 router.get("/logout", (req, res) => {
-  res.cookie("userLoggedIn", "", { expires: new Date(0) }); // this delete cookie (sets it to a date that is gone)
-  res.sendFile(path.join(__dirname, "../public", "index.html"));
+  try {
+    res.cookie("userLoggedIn", "", { expires: new Date(0) }); // this delete cookie (sets it to a date that is gone)
+    res.sendFile(path.join(__dirname, "../public", "index.html"));
+  } catch (e) {
+    console.log(e);
+  }
 });
 router.get("/logout/user", (req, res) => {
-  res.cookie("userLoggedIn", "", { expires: new Date(0) }); // this delete cookie (sets it to a date that is gone)
+  try {
+    res.cookie("userLoggedIn", "", { expires: new Date(0) }); // this delete cookie (sets it to a date that is gone)
 
-  res.send({ loggedout: true });
+    res.send({ loggedout: true });
+  } catch (e) {
+    console.log(e);
+  }
 });
-
+router.get('/checkCookie', checkUserToken, (req, res) => {
+  res.send({ validCookie: true })
+})
 router.post("/reset", async (req, res) => {
   const userEmail = req.body.userEmail;
   try {
@@ -116,7 +131,6 @@ router.post("/reset", async (req, res) => {
     if (userFound) {
       const userId = userFound._id;
       const encodedId = jwt.encode(userId, process.env.SECRET);
-      console.log(encodedId);
       const tranporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -135,7 +149,6 @@ router.post("/reset", async (req, res) => {
 
       tranporter.sendMail(mailOptions, function (e, info) {
         if (e) {
-          console.log(e);
           res.send({ email: "failed" });
         } else {
           res.send({ email: "success" });

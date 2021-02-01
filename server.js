@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const path = require("path");
-const jwt = require("jwt-simple");
 
 // Connection to DB
 mongoose.connect(`${process.env.DATABASE_URL}`, {
@@ -56,7 +55,10 @@ app.use("/comments", commentsRouter);
 app.use("/resetpassword", updateUserPasswordRouter);
 
 
-
 app.use(express.static(path.join(__dirname, "public")));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, "./public", "Categories.html"));
+})
 
 app.listen(port, () => console.log(`server now running on port: ${port}`));

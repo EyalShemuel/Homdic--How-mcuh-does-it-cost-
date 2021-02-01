@@ -1,10 +1,12 @@
 const getAllUsers = () => {
-  fetch("/admin")
+  fetch(`/admin`)
     .then((res) => res.json())
     .then((data) => {
       if (!data.admin) {
         window.location.href = "index.html"
       } else {
+        const usersAmount = data.usersAmount
+        // getPageAmount(usersAmount)
         writeUsersToDom(data.allUsers);
       }
     });

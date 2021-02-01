@@ -39,16 +39,20 @@ function handleLoginForm(e) {
   })
     .then((res) => res.json())
     .then((data) => {
-      if (data.status == "unauthorized") {
-        Swal.fire({
-          icon: "error",
-          title: "אופס...",
-          text: "משתמש/אימייל או הסיסמא אינם נכונים, נסה שוב",
-          confirmButtonColor: "red",
-          confirmButtonText: "אישור",
-        });
-      } else {
-        window.location.href = "/Categories.html";
+      try {
+        if (data.status == "unauthorized") {
+          Swal.fire({
+            icon: "error",
+            title: "אופס...",
+            text: "משתמש/אימייל או הסיסמא אינם נכונים, נסה שוב",
+            confirmButtonColor: "red",
+            confirmButtonText: "אישור",
+          });
+        } else {
+          window.location.href = "/Categories.html";
+        }
+      } catch (e) {
+        console.log(e);
       }
     });
 }
@@ -69,17 +73,28 @@ function handleRegisterForm(e) {
     body: JSON.stringify({ firstName, lastName, username, email, password }),
   })
     .then((res) => res.json())
-    .then((data) => {
-      if (data.status == "unauthorized") {
-        Swal.fire({
-          icon: "error",
-          title: "אופס...",
-          text: "כנראה שהפרטים שהזנת לא נכונים או קיימים במערכת, נסה שנית",
-          confirmButtonColor: "red",
-          confirmButtonText: "אישור",
-        });
-      } else {
-        window.location.href = "/";
+    .then(async (data) => {
+      try {
+        if (data.status == "unauthorized") {
+          Swal.fire({
+            icon: "error",
+            title: "אופס...",
+            text: "כנראה שהפרטים שהזנת לא נכונים או קיימים במערכת, נסה שנית",
+            confirmButtonColor: "red",
+            confirmButtonText: "אישור",
+          });
+        } else {
+          await Swal.fire({
+            position: "top-center",
+            icon: "success",
+            title: "ברוך הבא! נוצר עוברך משתמש.",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          window.location.href = "/category";
+        }
+      } catch (e) {
+        console.log(e);
       }
     });
 }
@@ -98,26 +113,30 @@ function handleResetPassword(e) {
   })
     .then((res) => res.json())
     .then(async (data) => {
-      if (data.email == "success") {
-        await Swal.fire({
-          position: "top-center",
-          icon: "success",
-          title: "אימייל עם קישור לשחזור הסיסמה נשלח אלייך.",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        window.location.href = "/"
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "אופס...",
-          text: "כנראה שקרתה שגיאה, לא הצלחנו לאתר את המייל שלך, נסה שוב..",
-          confirmButtonColor: "red",
-          confirmButtonText: "אישור",
-        });
-        const btn = document
-          .getElementById("hideBtn")
-          .setAttribute("style", "display:inherit");
+      try {
+        if (data.email == "success") {
+          await Swal.fire({
+            position: "top-center",
+            icon: "success",
+            title: "אימייל עם קישור לשחזור הסיסמה נשלח אלייך.",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          window.location.href = "/";
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "אופס...",
+            text: "כנראה שקרתה שגיאה, לא הצלחנו לאתר את המייל שלך, נסה שוב..",
+            confirmButtonColor: "red",
+            confirmButtonText: "אישור",
+          });
+          const btn = document
+            .getElementById("hideBtn")
+            .setAttribute("style", "display:inherit");
+        }
+      } catch (e) {
+        console.log(e);
       }
     });
 }
@@ -126,4 +145,15 @@ function hideButton() {
   const btn = document
     .getElementById("hideBtn")
     .setAttribute("style", "display:none");
+}
+
+const checkIfUserHasCookie = () => {
+  fetch('/checkCookie')
+    .then((res) => res.json())
+    .then(async (data) => {
+      if (data.validCookie) {
+        window.location.href = 'Categoires.html'
+      }
+    })
+
 }

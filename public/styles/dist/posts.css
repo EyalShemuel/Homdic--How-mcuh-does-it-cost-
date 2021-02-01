@@ -24,6 +24,27 @@ body {
   width: 99vw;
   height: 99vh;
 }
+body #loader {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  bottom: 20%;
+  z-index: 8;
+  border: 12px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 12px solid #444444;
+  width: 70px;
+  height: 70px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
 body #categoryHeder {
   overflow: hidden;
   height: 15%;
@@ -34,6 +55,8 @@ body #categoryHeder {
   /*  margin: 3% 0% 1% 0%; */
   top: 6.5%;
   text-align: center;
+  border-bottom: 1px solid darkgray;
+  padding: 1%;
 }
 body #categoryHeder h1 {
   margin-right: 3%;
@@ -44,8 +67,18 @@ body #categoryHeder h1 {
 }
 body #categoryHeder img {
   float: left;
-  max-width: 20%;
-  max-height: max-content;
+  max-height: 90%;
+  margin: auto 0.2% auto 0.3%;
+}
+@media only screen and (min-width: 0px) {
+  body #categoryHeder img {
+    display: none;
+  }
+}
+@media only screen and (min-width: 488px) {
+  body #categoryHeder img {
+    display: block;
+  }
 }
 body #categoryHeder input {
   position: relative;
@@ -138,25 +171,34 @@ body #app .AddPost #AddPostfutter div p {
   margin-bottom: 20%;
 }
 body #app .post {
+  margin-top: 3%;
   border-radius: 0 0 10px 10px;
   box-shadow: 1px 1px 1px rgba(134, 134, 139, 0.699);
   background-color: white;
 }
 body #app .post #postheder {
   background-color: #cfd8dd;
-  cursor: pointer;
   display: grid;
   column-gap: 2%;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: repeat(3, auto);
 }
-body #app .post #postheder .userInfo {
+body #app .post #postheder .whenPosted {
   font-size: 12px;
+  font-weight: 550;
   margin: 2%;
   padding: 0;
-  grid-row: 3;
+  grid-row: 1;
   grid-column: 2;
-  align-self: end;
+  justify-self: end;
+}
+body #app .post #postheder .userInfo {
+  font-size: 12px;
+  font-weight: 550;
+  margin: 2%;
+  padding: 0;
+  grid-row: 2;
+  grid-column: 2;
   justify-self: end;
 }
 body #app .post #postheder .posttitle {
@@ -165,18 +207,22 @@ body #app .post #postheder .posttitle {
   grid-column: 1;
 }
 body #app .post #postheder .postbudy {
+  width: 40%;
   word-wrap: break-word;
   margin-right: 1%;
   grid-row: 2/4;
   grid-column: 1;
 }
 body #app .post #postheder img {
+  transition: transform 0.2s;
   align-self: center;
   justify-self: center;
   display: grid;
   max-width: 90%;
   grid-row: 1/3;
   grid-column: 2;
+  width: 50%;
+  height: 100%;
 }
 @media only screen and (min-width: 260px) {
   body #app .post #postheder img {
@@ -209,6 +255,9 @@ body #app .post #postheder img {
   body #app .post #postheder {
     padding: 2% 3% 1% 3%;
   }
+}
+body #app .post img:hover {
+  transform: scale(2);
 }
 body #app .post .addComment div {
   background-color: #e2e7ec;
@@ -293,6 +342,12 @@ body #app .post .futter .Notifications {
   margin-right: 6%;
   white-space: nowrap;
 }
+body #app .post .futter .Notifications .fav {
+  color: #2097f5;
+}
+body #app .post .futter .Notifications .notFav {
+  color: black;
+}
 body #app .post .futter .Notifications:active {
   color: #2097f5;
 }
@@ -311,9 +366,179 @@ body #app .post .futter .Toggled {
 body #app .post .futter .UnToggled {
   color: black;
 }
+body #app .noComments {
+  display: none;
+  align-self: center;
+  text-align: center;
+  width: 50%;
+  margin: 0 auto;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+body #app .closeComments {
+  display: none;
+  width: 50%;
+  margin: auto;
+  padding: 5px;
+  margin-top: 0.5%;
+  border-radius: 5px;
+}
+body #app .renderComment {
+  max-width: 95%;
+  margin: auto;
+}
+body #app .renderComment .comment {
+  border: 1px solid darkgray;
+  margin-top: 1%;
+  background-color: #f1f1f1;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(8, 1fr);
+  padding: 1%;
+  justify-content: space-around;
+  align-items: center;
+}
+body #app .renderComment .comment:nth-child(even) {
+  background-color: #cfcece;
+}
+body #app .renderComment .comment #bodyComment {
+  grid-row: 1/4;
+  grid-column: 1/8;
+  display: grid;
+  align-self: center;
+  line-height: 1.3;
+}
+body #app .renderComment .comment #authRouter {
+  font-weight: 550;
+  font-size: 13px;
+  grid-row: 0/3;
+  grid-column: 8/9;
+  justify-items: last baseline;
+  justify-self: end;
+  display: grid;
+  align-self: end;
+}
+body #app .renderComment .comment #authRouter p {
+  margin: 0;
+}
+body #app .renderComment .comment #likeComment {
+  grid-row: 3;
+  grid-column: 1/9;
+  justify-self: end;
+  display: flex;
+  flex-direction: row;
+  flex-direction: row-reverse;
+}
+body #app .renderComment .comment #likeComment .likesAmount {
+  font-size: 1rem;
+  font-weight: 550;
+}
+body #app .renderComment .hideCommentsButton {
+  padding: 5px;
+  margin: 5px;
+  width: 20%;
+}
+body #app .sortComments {
+  display: none;
+  justify-content: center;
+  margin: auto;
+}
+body #app .sortComments button {
+  padding: 5px;
+  margin: 5px;
+  border-radius: 5px;
+}
+body #app .loadingComments {
+  display: none;
+  width: 20%;
+  margin: 2% auto;
+  padding: 10px;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+}
+body #app .loadingNewPosts {
+  display: block;
+  width: 100%;
+  height: 100px;
+  border: 1px solid black;
+  padding: 10px;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+  z-index: 6;
+}
+body #app .dot-spin {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: transparent;
+  color: transparent;
+  box-shadow: 0 -18px 0 0 #444444, 12.72984px -12.72984px 0 0 #444444, 18px 0 0 0 #444444, 12.72984px 12.72984px 0 0 rgba(152, 128, 255, 0), 0 18px 0 0 rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 0 rgba(152, 128, 255, 0), -18px 0 0 0 rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 0 rgba(152, 128, 255, 0);
+  animation: dotSpin 1.5s infinite linear;
+}
+@keyframes dotSpin {
+  0%, 100% {
+    box-shadow: 0 -18px 0 0 #444444, 12.72984px -12.72984px 0 0 #444444, 18px 0 0 0 #444444, 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+  }
+  12.5% {
+    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 0 #444444, 18px 0 0 0 #444444, 12.72984px 12.72984px 0 0 #444444, 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+  }
+  25% {
+    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 0 #444444, 12.72984px 12.72984px 0 0 #444444, 0 18px 0 0 #444444, -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+  }
+  37.5% {
+    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 0 #444444, 0 18px 0 0 #444444, -12.72984px 12.72984px 0 0 #444444, -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+  }
+  50% {
+    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 0 #444444, -12.72984px 12.72984px 0 0 #444444, -18px 0 0 0 #444444, -12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0);
+  }
+  62.5% {
+    box-shadow: 0 -18px 0 -5px rgba(152, 128, 255, 0), 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 0 #444444, -18px 0 0 0 #444444, -12.72984px -12.72984px 0 0 #444444;
+  }
+  75% {
+    box-shadow: 0 -18px 0 0 #444444, 12.72984px -12.72984px 0 -5px rgba(152, 128, 255, 0), 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 0 #444444, -12.72984px -12.72984px 0 0 #444444;
+  }
+  87.5% {
+    box-shadow: 0 -18px 0 0 #444444, 12.72984px -12.72984px 0 0 #444444, 18px 0 0 -5px rgba(152, 128, 255, 0), 12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), 0 18px 0 -5px rgba(152, 128, 255, 0), -12.72984px 12.72984px 0 -5px rgba(152, 128, 255, 0), -18px 0 0 -5px rgba(152, 128, 255, 0), -12.72984px -12.72984px 0 0 #444444;
+  }
+}
+
+.liked {
+  color: red;
+}
+
+.unliked {
+  color: black;
+}
+
+.material-icons {
+  display: flex;
+  justify-content: center;
+}
+
+.active {
+  cursor: pointer;
+}
+
+.deletePostButton {
+  padding: 5px;
+  background-color: #fa5f5f;
+  color: white;
+  cursor: pointer;
+  outline: 0;
+  border: 1px solid red;
+  border-radius: 5px;
+  font-weight: 550;
+  transition: all 0.4s ease-in;
+}
+
+.deletePostButton:hover {
+  background-color: red;
+}
 
 .newPostButton {
-  top: 35%;
   right: 15%;
   position: absolute;
   border: none;
@@ -326,15 +551,25 @@ body #app .post .futter .UnToggled {
   border-radius: 20px;
   transition: all 0.4s ease-in;
   cursor: pointer;
-  background-color: #008CBA;
+  background-color: #007AA3;
   color: white;
   border: 1px solid white;
+}
+@media only screen and (min-width: 0px) {
+  .newPostButton {
+    top: 70%;
+  }
+}
+@media only screen and (min-width: 1000px) {
+  .newPostButton {
+    top: 15%;
+  }
 }
 
 .newPostButton:hover {
   font-weight: 550;
   right: 14.9%;
-  border: 3px solid #008CBA;
+  border: 3px solid #007AA3;
   background-color: white;
   color: black;
 }
